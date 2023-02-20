@@ -6,6 +6,10 @@ Business Ready Documents for Meraki
 
 Organizations
 
+Organization Devices
+
+Organization Networks
+
 ## Installation
 
 ```console
