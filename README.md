@@ -4,6 +4,8 @@ Business Ready Documents for Meraki
 
 ## Current API Coverage
 
+Organizations
+
 ## Installation
 
 ```console

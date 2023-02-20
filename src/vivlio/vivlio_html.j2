@@ -1,4 +1,111 @@
 {%- include 'datatable_header.j2' %}
-{%- if api == "" %}
+{%- if api == "organizations" %}
+<h1>Organizations</h1>
+<table id = "datatable">
+<thead>
+  <tr>
+    <th>ID</th>
+    <th>Name</th>
+    <th>API Enabled</th>
+    <th>Cloud Region Name</th>
+    <th>Licensing Model</th>
+    <th>Management Details</th>
+    <th>URL</th>
+  </tr>
+</thead>  
+<tbody>
+{%-     for org in data_to_template %}
+    <tr>
+        <td>{{ org.id }}</td>
+        <td>{{ org.name }}</td>
+        <td>{{ org.api.enabled }}</td>
+        <td>{{ org.cloud.region.name }}</td>
+        <td>{{ org.licensing.model }}</td>
+        <td>{{ org.management.details }}</td>
+        <td><a href="{{ org.url }}">URL</td>
+    </tr>
+{%-     endfor %}
+</tbody>
+</table>
+{%- elif "/networks" in api %}
+<h1>Organization Networks</h1>
+<table id = "datatable">
+<thead>
+  <tr>
+    <th>Name</th>
+    <th>Product Types</th>
+    <th>Enrollment String</th>
+    <th>ID</th>
+    <th>Is Bound To Config Template</th>
+    <th>Notes</th>
+    <th>Organization ID</th>
+    <th>Tags</th>
+    <th>Time Zone</th>
+    <th>URL</th>
+  </tr>
+</thead>  
+<tbody>
+{%-     for network in data_to_template %}
+{%-         for product_type in network.productTypes %}
+  <tr>
+    <td>{{ network.name }}</td>
+    <td>{{ product_type }}</td>
+    <td>{{ network.enrollmentString }}</td>
+    <td>{{ network.id }}</td>
+    <td>{{ network.isBoundToConfigTemplate }}</td>
+    <td>{{ network.notes }}</td>
+    <td>{{ network.organizationId }}</td>
+    <td>{{ network.tags }}</td>
+    <td>{{ network.timeZone }}</td>
+    <td><a href="{{ network.url }}">URL</a></td>
+  </tr>
+{%-         endfor %}
+{%-     endfor %}
+</tbody>
+</table>
+{%- elif "/devices" in api %}
+<h1>Organization Devices</h1>
+<table id = "datatable">
+<thead>
+  <tr>
+    <th>Name</th>
+    <th>Address</th>
+    <th>Configuration Updated At</th>
+    <th>Firmware</th>
+    <th>LAN IP</th>
+    <th>Latitude</th>
+    <th>Longitude</th>
+    <th>MAC</th>
+    <th>Model</th>
+    <th>Network ID</th>
+    <th>Notes</th>
+    <th>Product Type</th>
+    <th>Serial</th>
+    <th>Tags</th>
+    <th>URL</th>
+  </tr>
+</thead>  
+<tbody>
+{%-     for network in data_to_template %}
+  <tr>
+    <td>{{ network.name }}</td>
+    <td>{{ network.address }}</td>
+    <td>{{ network.configurationUpdatedAt }}</td>
+    <td>{{ network.firmware }}</td>
+    <td>{{ network.lanIp }}</td>
+    <td>{{ network.lat }}</td>
+    <td>{{ network.lng }}</td>
+    <td>{{ network.mac }}</td>
+    <td>{{ network.model }}</td>
+    <td>{{ network.networkId }}</td>
+    <td>{{ network.notes }}</td>
+    <td>{{ network.productType }}</td>
+    <td>{{ network.serial }}</td>
+    <td>{{ network.tags }}</td>
+    <td><a href="{{ network.url }}">URL</a></td>
+  </tr>
+{%-     endfor %}
+</tbody>
+</table>
 {%- endif %}
 {%- include 'datatable_footer.j2' %}

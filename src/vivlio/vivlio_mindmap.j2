@@ -1,3 +1,49 @@
-{%- if api == "" %}
-
+{%- if api == "organizations" %}
+# Organizations
+{%-     for org in data_to_template %}
+## ID: {{ org.id }}
+### Name: {{ org.name }}
+### Enabled: {{ org.api.enabled }}
+### Cloud Region Name: {{ org.cloud.region.name }}
+### Licensing Model: {{ org.licensing.model }}
+### Management Details: {{ org.management.details }}
+### [URL]({{ org.url }})
+{%-     endfor %}
+{%- elif "/networks" in api %}
+# Organization Networks
+{%-     for network in data_to_template %}
+## Name: {{ network.name }}
+### Enrollment String: {{ network.enrollmentString }}
+### ID: {{ network.id }}
+### Is Bound to Config Template: {{ network.isBoundToConfigTemplate }}
+### Notes: {{ network.notes }}
+### Organization ID: {{ network.organizationId }}
+### Tags: {{ network.tags }}
+### Timezone: {{ network.timeZone }}
+### [URL]({{ network.url }})
+### Products
+{%-         for product_type in network.productTypes %}
+#### {{ product_type }}
+{%-         endfor %}
+{%-     endfor %}
+{%- elif "/devices" in api %}
+# Organization Devices
+{%-     for network in data_to_template %}
+## Name: {{ network.name }}
+### Location
+#### Address: {{ network.address }}
+#### Latitude: {{ network.lat }}
+#### Longitude: {{ network.lng }}
+### Configuration Updated At: {{ network.configurationUpdatedAt }}
+### Firmware: {{ network.firmware }}
+### LAN IP: {{ network.lanIp }}
+### MAC: {{ network.mac }}
+### Model: {{ network.model }}
+### Network ID: {{ network.networkId }}
+### Notes: {{ network.notes }}
+### Product Type: {{ network.productType }}
+### Serial: {{ network.serial }}
+### Tags: {{ network.tags }}
+### [URL]({{ network.url }})
+{%-     endfor %}
 {%- endif %}

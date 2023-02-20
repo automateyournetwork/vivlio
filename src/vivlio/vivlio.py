@@ -19,13 +19,16 @@ class Vivlio():
 
     def vivlio(self):
         self.make_directories()
-        # self.device_list = asyncio.run(self.build_device_list())
-        # asyncio.run(self.add_device_apis())
+        self.org_list = asyncio.run(self.build_org_list())
+        asyncio.run(self.add_org_apis())
         asyncio.run(self.main())
 
     def make_directories(self):
-        api_list = ['Organizations'
+        api_list = ['Organizations',
+                    'Networks',
+                    'Devices'
                     ]
+        
         current_directory = os.getcwd()
         for api in api_list:
             final_directory = os.path.join(current_directory, rf'{ api }/JSON')
@@ -41,19 +44,28 @@ class Vivlio():
             final_directory = os.path.join(current_directory, rf'{ api }/Mindmap')
             os.makedirs(final_directory, exist_ok=True)
 
-    # async def build_device_list(self):
-    #     async with aiohttp.ClientSession() as session:
-    #         async with session.get(f"{self.vManage}/dataservice/device",cookies = self.cookie, verify_ssl=False) as resp:
-    #             response_dict = await resp.json()
-    #             print(f"Status Code {resp.status}")
-    #             return (response_dict)    
+    async def build_org_list(self):
+        payload={}
+        headers = {
+        'X-Cisco-Meraki-API-Key': f'{self.token}'
+        }
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"https://api.meraki.com/api/v1/organizations",headers = headers, data=payload, verify_ssl=False) as resp:
+                response_dict = await resp.json()
+                print(f"Status Code {resp.status}")
+                return (response_dict)    
 
-    # async def add_device_apis(self):
-    #     #ARP
-    #     for device in self.device_list['data']:
-    #         arp_api = f"/dataservice/device/arp?deviceId={ device['deviceId'] }"
-    #         self.api_list.append(arp_api)
+    async def add_org_apis(self):
+        # Networks
+        for org in self.org_list:
+            networks_api = f"/organizations/{ org['id'] }/networks"
+            self.api_list.append(networks_api)
             
+        # Devices
+        for org in self.org_list:
+            devices_api = f"/organizations/{ org['id'] }/devices"
+            self.api_list.append(devices_api)
+
     api_list = ["organizations"
                 ]
 
@@ -78,12 +90,32 @@ class Vivlio():
                 async with aiofiles.open('Organizations/JSON/Organizations.json', mode='w') as f:
                     await f.write(json.dumps(payload, indent=4, sort_keys=True))
 
+            for org in self.org_list:
+                if api == f"/organizations/{ org['id'] }/networks":
+                    async with aiofiles.open(f"Networks/JSON/Organization { org['id'] } Networks.json", mode='w') as f:
+                        await f.write(json.dumps(payload, indent=4, sort_keys=True))                    
+
+            for org in self.org_list:
+                if api == f"/organizations/{ org['id'] }/devices":
+                    async with aiofiles.open(f"Devices/JSON/Organization { org['id'] } Devices.json", mode='w') as f:
+                        await f.write(json.dumps(payload, indent=4, sort_keys=True))
+
     async def yaml_file(self, parsed_json):
         for api, payload in json.loads(parsed_json):
             clean_yaml = yaml.dump(payload, default_flow_style=False)
             if api == "organizations":
                 async with aiofiles.open('Organizations/YAML/Organizations.yaml', mode='w' ) as f:
                     await f.write(clean_yaml)
+
+            for org in self.org_list:
+                if api == f"/organizations/{ org['id'] }/networks":
+                    async with aiofiles.open(f"Networks/YAML/Organization { org['id'] } Networks.yaml", mode='w') as f:
+                        await f.write(clean_yaml)
+
+            for org in self.org_list:
+                if api == f"/organizations/{ org['id'] }/devices":
+                    async with aiofiles.open(f"Devices/YAML/Organization { org['id'] } Devices.yaml", mode='w') as f:
+                        await f.write(clean_yaml)
 
     async def csv_file(self, parsed_json):
         template_dir = Path(__file__).resolve().parent
@@ -96,6 +128,16 @@ class Vivlio():
                 async with aiofiles.open('Organizations/CSV/Organizations.csv', mode='w' ) as f:
                     await f.write(csv_output)
 
+            for org in self.org_list:
+                if api == f"/organizations/{ org['id'] }/networks":
+                    async with aiofiles.open(f"Networks/CSV/Organization { org['id'] } Networks.csv", mode='w') as f:
+                        await f.write(csv_output)
+
+            for org in self.org_list:
+                if api == f"/organizations/{ org['id'] }/devices":
+                    async with aiofiles.open(f"Devices/CSV/Organization { org['id'] } Devices.csv", mode='w') as f:
+                        await f.write(csv_output)
+
     async def markdown_file(self, parsed_json):
         template_dir = Path(__file__).resolve().parent
         env = Environment(loader=FileSystemLoader(str(template_dir)), enable_async=True)
@@ -107,6 +149,16 @@ class Vivlio():
                 async with aiofiles.open('Organizations/Markdown/Organizations.md', mode='w' ) as f:
                     await f.write(markdown_output)
 
+            for org in self.org_list:
+                if api == f"/organizations/{ org['id'] }/networks":
+                    async with aiofiles.open(f"Networks/Markdown/Organization { org['id'] } Networks.md", mode='w') as f:
+                        await f.write(markdown_output)
+
+            for org in self.org_list:
+                if api == f"/organizations/{ org['id'] }/devices":
+                    async with aiofiles.open(f"Devices/Markdown/Organization { org['id'] } Devices.md", mode='w') as f:
+                        await f.write(markdown_output)
+
     async def html_file(self, parsed_json):
         template_dir = Path(__file__).resolve().parent
         env = Environment(loader=FileSystemLoader(str(template_dir)), enable_async=True)
@@ -114,9 +166,19 @@ class Vivlio():
         for api, payload in json.loads(parsed_json):
             html_output = await html_template.render_async(api = api,
                                              data_to_template = payload)
-            if api == "":
+            if api == "organizations":
                 async with aiofiles.open('Organizations/HTML/Organizations.html', mode='w' ) as f:
                     await f.write(html_output)
+
+            for org in self.org_list:
+                if api == f"/organizations/{ org['id'] }/networks":
+                    async with aiofiles.open(f"Networks/HTML/Organization { org['id'] } Networks.html", mode='w') as f:
+                        await f.write(html_output)
+
+            for org in self.org_list:
+                if api == f"/organizations/{ org['id'] }/devices":
+                    async with aiofiles.open(f"Devices/HTML/Organization { org['id'] } Devices.html", mode='w') as f:
+                        await f.write(html_output)
 
     async def mindmap_file(self, parsed_json):
         template_dir = Path(__file__).resolve().parent
@@ -128,6 +190,16 @@ class Vivlio():
             if api == "organizations":
                 async with aiofiles.open('Organizations/Mindmap/Organizations.md', mode='w' ) as f:
                     await f.write(mindmap_output)
+
+            for org in self.org_list:
+                if api == f"/organizations/{ org['id'] }/networks":
+                    async with aiofiles.open(f"Networks/Mindmap/Organization { org['id'] } Networks.md", mode='w') as f:
+                        await f.write(mindmap_output)
+
+            for org in self.org_list:
+                if api == f"/organizations/{ org['id'] }/devices":
+                    async with aiofiles.open(f"Devices/Mindmap/Devices { org['id'] } Networks.md", mode='w') as f:
+                        await f.write(mindmap_output)
 
     async def all_files(self, parsed_json):
         await asyncio.gather(self.json_file(parsed_json),
