@@ -2,12 +2,15 @@
 {%-     for org in data_to_template %}
 {{ org.id }},{{ org.name }},{{ org.api.enabled }},{{ org.cloud.region.name }},{{ org.licensing.model }},{{ org.management.details | replace (","," ") }},{{ org.url }}
 {%-     endfor %}
-{%- elif "/networks" in api %}Name,Product Types,Enrollment String,ID,Is Bound To Config Template,Notes,Organization ID,Tags,Time Zone,URL
-{%-     for network in data_to_template %}
-{%-         for product_type in network.productTypes %}
+{%- elif "/networks" in api %}
+{%-     if "/clients" in api %}
+{%-     else %}Name,Product Types,Enrollment String,ID,Is Bound To Config Template,Notes,Organization ID,Tags,Time Zone,URL
+{%-         for network in data_to_template %}
+{%-             for product_type in network.productTypes %}
 {{ network.name }},{{ product_type }},{{ network.enrollmentString }},{{ network.id }},{{ network.isBoundToConfigTemplate }},{{ network.notes }},{{ network.organizationId }},{{ network.tags | replace(","," ") }},{{ network.timeZone }},{{ network.url }}
+{%-             endfor %}
 {%-         endfor %}
-{%-     endfor %}
+{%-     endif %}
 {%- elif "/devices" in api %}Name,Address,Configuration Updated At,Firmware,LAN IP,Latitude,Longitude,MAC,Model,Network ID,Notes,Product Type,Serial,Tags,URL
 {%-     for network in data_to_template %}
 {{ network.name }},{{ network.address | replace(","," ")}},{{ network.configurationUpdatedAt }},{{ network.firmware }},{{ network.lanIp }},{{ network.lat }},{{ network.lng }},{{ network.mac }},{{ network.model }},{{ network.networkId }},{{ network.notes }},{{ network.productType }},{{ network.serial }},{{ network.tags | replace(","," ") }},{{ network.url }}

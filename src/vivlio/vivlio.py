@@ -20,13 +20,16 @@ class Vivlio():
     def vivlio(self):
         self.make_directories()
         self.org_list = asyncio.run(self.build_org_list())
+        self.network_list = asyncio.run(self.build_network_list())
         asyncio.run(self.add_org_apis())
+        asyncio.run(self.add_network_apis())
         asyncio.run(self.main())
 
     def make_directories(self):
         api_list = ['Organizations',
                     'Networks',
-                    'Devices'
+                    'Devices',
+                    'Clients'
                     ]
         
         current_directory = os.getcwd()
@@ -66,6 +69,30 @@ class Vivlio():
             devices_api = f"/organizations/{ org['id'] }/devices"
             self.api_list.append(devices_api)
 
+    async def build_network_list(self):
+        payload={}
+        headers = {
+        'X-Cisco-Meraki-API-Key': f'{self.token}'
+        }
+        network_list=[]
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"https://api.meraki.com/api/v1/organizations",headers = headers, data=payload, verify_ssl=False) as resp:
+                response_dict = await resp.json()
+                print(f"Status Code {resp.status}")
+            for org in response_dict:        
+                async with session.get(f"https://api.meraki.com/api/v1/organizations/{ org['id'] }/networks",headers = headers, data=payload, verify_ssl=False) as resp:
+                    network_dict = await resp.json()
+                    print(f"Status Code {resp.status}")                        
+                    network_list.append(network_dict)
+            return (network_list) 
+
+    async def add_network_apis(self):
+        # Networks
+        for hit in self.network_list:
+            for network in hit:
+                clients_api = f"/networks/{ network['id']}/clients"
+                self.api_list.append(clients_api)
+            
     api_list = ["organizations"
                 ]
 
@@ -99,6 +126,12 @@ class Vivlio():
                 if api == f"/organizations/{ org['id'] }/devices":
                     async with aiofiles.open(f"Devices/JSON/Organization { org['id'] } Devices.json", mode='w') as f:
                         await f.write(json.dumps(payload, indent=4, sort_keys=True))
+
+            for hit in self.network_list:
+                for network in hit:
+                    if api == f"/networks/{ network['id']}/clients":
+                        async with aiofiles.open(f"Clients/JSON/Network { network['id'] } Clients.json", mode='w') as f:
+                            await f.write(json.dumps(payload, indent=4, sort_keys=True))
 
     async def yaml_file(self, parsed_json):
         for api, payload in json.loads(parsed_json):
