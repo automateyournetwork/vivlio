@@ -20,12 +20,13 @@ class Vivlio():
         asyncio.run(self.devices())
         asyncio.run(self.clients())
         asyncio.run(self.management_interfaces())
+        asyncio.run(self.loss_and_latency())
         print(f"Vivlio has transformed { self.api_count } Meraki APIs into Business Ready Documents")
 
     def make_directories(self):
-        folder_list = ['CDP LLDP',
-                    'Clients',
+        folder_list = ['Clients',
                     'Devices',
+                    'Loss And Latency',
                     'Management Interfaces',
                     'Networks',
                     'Organizations'
@@ -46,53 +47,52 @@ class Vivlio():
             final_directory = os.path.join(current_directory, rf'{ folder }/Mindmap')
             os.makedirs(final_directory, exist_ok=True)
 
-    async def get_management_interfaces(self,device_serial,device_name):
+    async def get_loss_and_latency(self,device_serial,device_name):
         async with meraki.aio.AsyncDashboardAPI() as aiomeraki:
             try:
-                my_clients = await aiomeraki.devices.getDeviceManagementInterface(device_serial)
+                my_loss_and_latency = await aiomeraki.devices.getDeviceLossAndLatencyHistory(device_serial)
                 self.api_count += 1
-                my_clients['device_serial']=device_serial
-                my_clients['name']=device_name
-                print(my_clients)
-                return(my_clients)
+                my_loss_and_latency['device_serial']=device_serial
+                my_loss_and_latency['name']=device_name
+                return(my_loss_and_latency)
             except:
-                print("No Management Interface")
+                print("No Loss or Latency")
 
-    async def management_interfaces(self):
-        api = "management_interfaces"
-        results = await asyncio.gather(*(self.get_management_interfaces(device['serial'],device['name']) for hit in self.device_list if hit for device in hit))
-        async with aiofiles.open("Management Interfaces/JSON/Management Interfaces.json", mode="w") as f:
+    async def loss_and_latency(self):
+        api = "loss_and_latency"
+        results = await asyncio.gather(*(self.get_cdp_lldp(device['serial'],device['name']) for hit in self.device_list if hit for device in hit))
+        async with aiofiles.open("Loss And Latency/JSON/Loss And Latency.json", mode="w") as f:
             await f.write(json.dumps(results, indent=4, sort_keys=True))
         clean_yaml = yaml.dump(results, default_flow_style=False)
-        async with aiofiles.open("Management Interfaces/YAML/Management Interfaces.yaml", mode='w' ) as f:
+        async with aiofiles.open("Loss And Latency/YAML/Loss And Latency.yaml", mode='w' ) as f:
             await f.write(clean_yaml)
         template_dir = Path(__file__).resolve().parent
         env = Environment(loader=FileSystemLoader(str(template_dir)), enable_async=True)
         csv_template = env.get_template('vivlio_csv.j2')
         csv_output = await csv_template.render_async(api = api,
                                         data_to_template = results)
-        async with aiofiles.open("Management Interfaces/CSV/Management Interfaces.csv", mode='w' ) as f:
+        async with aiofiles.open("Loss And Latency/CSV/Loss And Latency.csv", mode='w' ) as f:
             await f.write(csv_output)
         template_dir = Path(__file__).resolve().parent
         env = Environment(loader=FileSystemLoader(str(template_dir)), enable_async=True)
         markdown_template = env.get_template('vivlio_markdown.j2')    
         markdown_output = await markdown_template.render_async(api = api,
                                     data_to_template = results)
-        async with aiofiles.open("Management Interfaces/Markdown/Management Interfaces.md", mode='w' ) as f:
+        async with aiofiles.open("Loss And Latency/Markdown/Loss And Latency.md", mode='w' ) as f:
             await f.write(markdown_output)
         template_dir = Path(__file__).resolve().parent
         env = Environment(loader=FileSystemLoader(str(template_dir)), enable_async=True)
         html_template = env.get_template('vivlio_html.j2')
         html_output = await html_template.render_async(api = api,
                                         data_to_template = results)
-        async with aiofiles.open("Management Interfaces/HTML/Management Interfaces.html", mode='w' ) as f:
+        async with aiofiles.open("Loss And Latency/HTML/Loss And Latency.html", mode='w' ) as f:
             await f.write(html_output)
         template_dir = Path(__file__).resolve().parent
         env = Environment(loader=FileSystemLoader(str(template_dir)), enable_async=True)
         mindmap_template = env.get_template('vivlio_mindmap.j2')
         mindmap_output = await mindmap_template.render_async(api = api,
                                              data_to_template = results)
-        async with aiofiles.open("Management Interfaces/Mindmap/Management Interfaces.md", mode='w' ) as f:
+        async with aiofiles.open("Loss And Latency/Mindmap/Loss And Latency.md", mode='w' ) as f:
             await f.write(mindmap_output)
 
     async def get_management_interfaces(self,device_serial,device_name):
@@ -102,7 +102,6 @@ class Vivlio():
                 self.api_count += 1
                 my_clients['device_serial']=device_serial
                 my_clients['name']=device_name
-                print(my_clients)
                 return(my_clients)
             except:
                 print("No Management Interface")
