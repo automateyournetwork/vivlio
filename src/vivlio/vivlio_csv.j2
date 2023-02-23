@@ -28,4 +28,10 @@
 {%-             endfor %}
 {%-         endif %}
 {%-    endfor %}
+{%- elif api == "management_interfaces" %}Name,Device Serial,Active DDNS Hostname,DDNS Hostname WAN 1,DDNS Hostname WAN 2,WAN 1 Using Static IP,Static DNS,Static Gateway IP,Static IP,Static Subnet Mask,VLAN,WAN Enabled,WAN 2 Using Static IP,Static DNS,Static Gateway IP,Static IP,Static Subnet Mask,VLAN,WAN Enabled
+{%-     for interface in data_to_template %}
+{%-         if interface %}
+{{ interface.name }},{{ interface.device_serial }},{%- if interface.ddnsHostnames %}{{ interface.ddnsHostnames.activeDdnsHostname }},{{ interface.ddnsHostnames.ddnsHostnameWan1 }},{{ interface.ddnsHostnames.ddnsHostnameWan2 }},{%- else %}N/A,N/A,N/A,{%- endif %}{%- if interface.wlan1 %}{{ interface.wlan1.usingStaticIp }},{{ interface.wan1.staticDns | replace(","," ") | default("N/A") }},{{ interface.wan1.staticGatewayIp | default ("N/A") }},{{ interface.wan1.staticIp | default ("N/A") }},{{ interface.wan1.staticSubnetMask | default ("N/A") }},{{ interface.wan1.vlan }},{{ interface.wan1.wanEnabled }},{%- else %}N/A,N/A,N/A,N/A,N/A,N/A,N/A,{%- endif %}{%- if interface.wlan2 %}{{ interface.wlan2.usingStaticIp | default("N/A") }},{{ interface.wlan2.staticDns | replace(","," ") | default("N/A") }},{{ interface.wlan2.staticGatewayIp | default("N/A") }},{{ interface.wlan2.staticIp | default("N/A") }},{{ interface.wlan2.staticSubnetMask | default("N/A") }},{{ interface.wlan2.vlan }},{{ interface.wlan2.wanEnabled }}{%- else %}N/A,N/A,N/A,N/A,N/A,N/A,N/A{%- endif %}
+{%-         endif %}
+{%-    endfor %}
 {%- endif %}

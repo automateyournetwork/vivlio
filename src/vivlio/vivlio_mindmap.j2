@@ -93,4 +93,40 @@
 {%-             endfor %}
 {%-         endif %}
 {%-    endfor %}
+{%- elif api == "management_interfaces" %}
+# Management Interfaces
+{%-     for interface in data_to_template %}
+{%-         if interface %}
+## Device Name: {{ interface.name }}
+### Serial Number: {{ interface.device_serial }}
+{%- if interface.ddnsHostnames %}
+### DDNS Hostnames
+#### Active: {{ interface.ddnsHostnames.activeDdnsHostname }}
+#### WAN1: {{ interface.ddnsHostnames.ddnsHostnameWan1 }}
+#### WAN2: {{ interface.ddnsHostnames.ddnsHostnameWan2 }}
+{%- endif %}
+{%- if interface.wlan1 %}
+### WLAN 01
+#### Using Static IP: {{ interface.wlan1.usingStaticIp }}
+#### Static
+##### DNS: {{ interface.wan1.staticDns | default("N/A") }}
+##### Gateway IP: {{ interface.wan1.staticGatewayIp | default ("N/A") }}
+##### IP: {{ interface.wan1.staticIp | default ("N/A") }}
+##### Subnet Mask: {{ interface.wan1.staticSubnetMask | default ("N/A") }}
+#### VLAN: {{ interface.wan1.vlan }}
+#### WAN Enabled {{ interface.wan1.wanEnabled }}
+{%- endif %}
+{%- if interface.wlan2 %}
+### WLAN 02
+#### Using Static IP: {{ interface.wlan2.usingStaticIp | default("N/A") }}
+#### Static
+##### DNS: {{ interface.wlan2.staticDns | default("N/A") }}
+##### Gateway IP: {{ interface.wlan2.staticGatewayIp | default("N/A") }}
+##### IP: {{ interface.wlan2.staticIp | default("N/A") }}
+##### Subnet Mask: {{ interface.wlan2.staticSubnetMask | default("N/A") }}
+#### VLAN: {{ interface.wlan2.vlan }}
+#### WAN Enabled: {{ interface.wlan2.wanEnable }}
+{%- endif %}
+{%-         endif %}
+{%-    endfor %}
 {%- endif %}
