@@ -27,47 +27,52 @@
 {%-     endfor %}
 </tbody>
 </table>
-{%- elif "/networks" in api %}
+{%- elif api == "networks" %}
 <h1>Organization Networks</h1>
 <table id = "datatable">
 <thead>
   <tr>
+    <th>Organization ID</th>
     <th>Name</th>
     <th>Product Types</th>
     <th>Enrollment String</th>
     <th>ID</th>
     <th>Is Bound To Config Template</th>
     <th>Notes</th>
-    <th>Organization ID</th>
     <th>Tags</th>
     <th>Time Zone</th>
     <th>URL</th>
   </tr>
 </thead>  
 <tbody>
-{%-     for network in data_to_template %}
-{%-         for product_type in network.productTypes %}
+{%-     for hit in data_to_template %}
+{%-         if hit %}
+{%-             for network in hit %}
+{%-                 for product_type in network.productTypes %}
   <tr>
+    <td>{{ network.organizationId }}</td>
     <td>{{ network.name }}</td>
     <td>{{ product_type }}</td>
     <td>{{ network.enrollmentString }}</td>
     <td>{{ network.id }}</td>
     <td>{{ network.isBoundToConfigTemplate }}</td>
     <td>{{ network.notes }}</td>
-    <td>{{ network.organizationId }}</td>
     <td>{{ network.tags }}</td>
     <td>{{ network.timeZone }}</td>
     <td><a href="{{ network.url }}">URL</a></td>
   </tr>
-{%-         endfor %}
-{%-     endfor %}
+{%-                 endfor %}
+{%-             endfor %}
+{%-         endif %}
+{%-    endfor %}
 </tbody>
 </table>
-{%- elif "/devices" in api %}
+{%- elif api == "devices" %}
 <h1>Organization Devices</h1>
 <table id = "datatable">
 <thead>
   <tr>
+    <th>Network ID</th>
     <th>Name</th>
     <th>Address</th>
     <th>Configuration Updated At</th>
@@ -77,7 +82,6 @@
     <th>Longitude</th>
     <th>MAC</th>
     <th>Model</th>
-    <th>Network ID</th>
     <th>Notes</th>
     <th>Product Type</th>
     <th>Serial</th>
@@ -86,8 +90,11 @@
   </tr>
 </thead>  
 <tbody>
-{%-     for network in data_to_template %}
+{%-     for hit in data_to_template %}
+{%-         if hit %}
+{%-             for network in hit %}
   <tr>
+    <td>{{ network.networkId }}</td>
     <td>{{ network.name }}</td>
     <td>{{ network.address }}</td>
     <td>{{ network.configurationUpdatedAt }}</td>
@@ -97,14 +104,87 @@
     <td>{{ network.lng }}</td>
     <td>{{ network.mac }}</td>
     <td>{{ network.model }}</td>
-    <td>{{ network.networkId }}</td>
     <td>{{ network.notes }}</td>
     <td>{{ network.productType }}</td>
     <td>{{ network.serial }}</td>
     <td>{{ network.tags }}</td>
     <td><a href="{{ network.url }}">URL</a></td>
   </tr>
-{%-     endfor %}
+{%-             endfor %}
+{%-         endif %}
+{%-    endfor %}
+</tbody>
+</table>
+{%- elif api == "clients" %}
+<h1>Network Clients</h1>
+<table id = "datatable">
+<thead>
+  <tr>
+    <th>ID</th>
+    <th>Adaptive Policy Group</th>
+    <th>Description</th>
+    <th>Device Type Prediction</th>
+    <th>First Seen</th>
+    <th>Group Policy 802.1x</th>
+    <th>IPv4</th>
+    <th>IPv6</th>
+    <th>IPv6 Local</th>
+    <th>Last Seen</th>
+    <th>MAC</th>
+    <th>Manufacturer</th>
+    <th>Notes</th>
+    <th>OS</th>
+    <th>Recent Device Connection</th>
+    <th>Recent Device MAC</th>
+    <th>Recent Device Name</th>
+    <th>Recent Device Serial</th>
+    <th>SM Installed</th>
+    <th>SSID</th>
+    <th>Status</th>
+    <th>Switchport</th>
+    <th>Usage Received</th>
+    <th>Usage Sent</th>
+    <th>Usage Total</th>
+    <th>User</th>
+    <th>VLAN</th>
+  </tr>
+</thead>  
+<tbody>
+{%-     for hit in data_to_template %}
+{%-         if hit %}
+{%-             for client in hit %}
+  <tr>
+    <td>{{ client.id }}</td>
+    <td>{{ client.adaptivePolicyGroup }}</td>
+    <td>{{ client.description }}</td>
+    <td>{{ client.deviceTypePrediction }}</td>
+    <td>{{ client.firstSeen }}</td>
+    <td>{{ client.groupPolicy8021x }}</td>
+    <td>{{ client.ip }}</td>
+    <td>{{ client.ip6 }}</td>
+    <td>{{ client.ip6Local }}</td>
+    <td>{{ client.lastSeen }}</td>
+    <td>{{ client.mac }}</td>
+    <td>{{ client.manufacturer }}</td>
+    <td>{{ client.notes }}</td>
+    <td>{{ client.os }}</td>
+    <td>{{ client.recentDeviceConnection }}</td>
+    <td>{{ client.recentDeviceMac }}</td>
+    <td>{{ client.recentDeviceName }}</td>
+    <td>{{ client.recentDeviceSerial }}</td>
+    <td>{{ client.smInstalled }}</td>
+    <td>{{ client.ssid }}</td>
+    <td>{{ client.status }}</td>
+    <td>{{ client.switchport }}</td>
+    <td>{{ client.usage.recv }}</td>
+    <td>{{ client.usage.sent }}</td>
+    <td>{{ client.usage.total }}</td>
+    <td>{{ client.user }}</td>
+    <td>{{ client.vlan }}</td>
+  </tr>
+{%-             endfor %}
+{%-         endif %}
+{%-    endfor %}
 </tbody>
 </table>
 {%- endif %}

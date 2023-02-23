@@ -9,26 +9,32 @@
 ### Management Details: {{ org.management.details }}
 ### [URL]({{ org.url }})
 {%-     endfor %}
-{%- elif "/networks" in api %}
+{%- elif api == "networks" %}
 # Organization Networks
-{%-     for network in data_to_template %}
-## Name: {{ network.name }}
+{%-     for hit in data_to_template %}
+{%-         if hit %}
+{%-             for network in hit %}
+## Organization ID: {{ network.organizationId }}
+### Name: {{ network.name }}
 ### Enrollment String: {{ network.enrollmentString }}
 ### ID: {{ network.id }}
 ### Is Bound to Config Template: {{ network.isBoundToConfigTemplate }}
 ### Notes: {{ network.notes }}
-### Organization ID: {{ network.organizationId }}
 ### Tags: {{ network.tags }}
 ### Timezone: {{ network.timeZone }}
 ### [URL]({{ network.url }})
 ### Products
-{%-         for product_type in network.productTypes %}
+{%-                 for product_type in network.productTypes %}
 #### {{ product_type }}
-{%-         endfor %}
-{%-     endfor %}
-{%- elif "/devices" in api %}
+{%-                 endfor %}
+{%-             endfor %}
+{%-         endif %}
+{%-    endfor %}
+{%- elif api == "devices" %}
 # Organization Devices
-{%-     for network in data_to_template %}
+{%-     for hit in data_to_template %}
+{%-         if hit %}
+{%-             for network in hit %}
 ## Name: {{ network.name }}
 ### Location
 #### Address: {{ network.address }}
@@ -45,5 +51,46 @@
 ### Serial: {{ network.serial }}
 ### Tags: {{ network.tags }}
 ### [URL]({{ network.url }})
-{%-     endfor %}
+{%-             endfor %}
+{%-         endif %}
+{%-    endfor %}
+{%- elif api == "clients" %}
+# Network Clients
+{%-     for hit in data_to_template %}
+{%-         if hit %}
+{%-             for client in hit %}
+## ID: {{ client.id }}
+### Adaptive Policy Group: {{ client.adaptivePolicyGroup }}
+### Description: {{ client.description }}
+### Device Type Prediction: {{ client.deviceTypePrediction }}
+### Timestamps
+#### First Seen: {{ client.firstSeen }}
+#### Last Seen: {{ client.lastSeen }}
+### Group Policy 802.1x: {{ client.groupPolicy8021x }}
+### IP
+#### v4: {{ client.ip }}
+#### v6: {{ client.ip6 }}
+#### v6 Local: {{ client.ip6Local }}
+### MAC: {{ client.mac }}
+### Manufacturer: {{ client.manufacturer }}
+### Notes: {{ client.notes }}
+### OS: {{ client.os }}
+### Recent Device
+#### Connection: {{ client.recentDeviceConnection }}
+#### MAC: {{ client.recentDeviceMac }}
+#### Name: {{ client.recentDeviceName }}
+#### Serial: {{ client.recentDeviceSerial }}
+### SM Installed: {{ client.smInstalled }}
+### SSID: {{ client.ssid }}
+### Status: {{ client.status }}
+### Switchport: {{ client.switchport }}
+### Usage:
+#### Received: {{ client.usage.recv }}
+#### Sent: {{ client.usage.sent }}
+#### Total: {{ client.usage.total }}
+### User: {{ client.user }}
+### VLAN: {{ client.vlan }}
+{%-             endfor %}
+{%-         endif %}
+{%-    endfor %}
 {%- endif %}

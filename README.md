@@ -10,6 +10,8 @@ Organization Devices
 
 Organization Networks
 
+Network Clients
+
 ## Installation
 
 ```console
@@ -18,32 +20,19 @@ $ source meraki/bin/activate
 (meraki) $ pip install vivlio
 ```
 
-## Usage - Help
+## Usage - Environment Variable - IMPORTANT
+
+Please export / setup this environment variable prior to running vivlio
 
 ```console
-(meraki) $ vivlio --help
-```
+(meraki) $ export MERAKI_DASHBOARD_API_KEY=<Meraki API Token>
 
-![vivlio Help](/images/help.png)
+```
 
 ## Usage - In-line
 
 ```console
-(meraki) $ vivlio --token <Meraki Token>
-```
-
-## Usage - Interactive
-
-```console
 (meraki) $ vivlio
-Meraki Token: <Meraki Token>
-```
-
-## Usage - Environment Variables
-
-```console
-(meraki) $ export TOKEN=<Meraki API Token>
-
 ```
 
 ## Recommended VS Code Extensions
@@ -63,7 +52,7 @@ This code works with the always on sandbox!
 https://devnetsandbox.cisco.com/RM/Diagram/Index/a9487767-deef-4855-b3e3-880e7f39eadc?diagramType=Topology
 
 ```console
-export TOKEN=
+export MERAKI_DASHBOARD_API_KEY=fd6dd87d96915f21bc0e0b3d96a866ff0e53e381
 
 (venv)$ pip install vivlio
 (venv)$ mkdir vivlio_output
