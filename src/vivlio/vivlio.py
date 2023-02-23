@@ -52,17 +52,12 @@ class Vivlio():
                 self.api_count += 1
                 my_clients['device_serial']=device_serial
                 my_clients['name']=device_name
-                print(my_clients)
                 return(my_clients)
             except:
                 print("No Management Interface")
 
     async def management_interfaces(self):
         api = "management_interfaces"
-        for hit in self.device_list:
-            if hit:
-                for device in hit:
-                    print(device['serial'])
         results = await asyncio.gather(*(self.get_management_interfaces(device['serial'],device['name']) for hit in self.device_list if hit for device in hit))
         async with aiofiles.open("Management Interfaces/JSON/Management Interfaces.json", mode="w") as f:
             await f.write(json.dumps(results, indent=4, sort_keys=True))
