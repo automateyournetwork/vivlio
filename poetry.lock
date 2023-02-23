@@ -516,6 +516,22 @@ files = [
 ]
 
 [[package]]
+name = "meraki"
+version = "1.27.0"
+description = "Cisco Meraki Dashboard API library"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "meraki-1.27.0-py3-none-any.whl", hash = "sha256:b0472b50ec848d12315d1a95e345ccb56366bf945ae9815ff850a5c5ca204ac0"},
+    {file = "meraki-1.27.0.tar.gz", hash = "sha256:8e12e77748417c3437f91aa3bae976bd9c8030cb14821a17758515cb7b061ee0"},
+]
+
+[package.dependencies]
+aiohttp = "*"
+requests = "*"
+
+[[package]]
 name = "multidict"
 version = "6.0.4"
 description = "multidict implementation"
@@ -845,4 +861,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "63db8701b0016aa4218b6955e052937cea4af9fb1797bf7d11183438677d3535"
+content-hash = "b7524dd81595535b4b2297ce8f8f5289343c77770523efdfbaa199fcc3eab91d"

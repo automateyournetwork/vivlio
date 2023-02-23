@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "vivlio"
-version = "0.1.0"
+version = "1.0.0"
 description = "Business ready documents from Meraki"
 authors = ["John Capobianco <ptcapo@gmail.com>"]
 packages = [{ include = "vivlio", from = "src"}]
@@ -17,6 +17,7 @@ pyyaml = "^6.0"
 jinja2 = "^3.1.2"
 aiohttp = "^3.8.4"
 aiofiles = "^23.1.0"
+meraki = "^1.27.0"
 
 
 [build-system]

@@ -4,18 +4,36 @@
 {%-     for org in data_to_template %}
 | {{ org.id }} | {{ org.name }} | {{ org.api.enabled }} | {{ org.cloud.region.name }} | {{ org.licensing.model }} | {{ org.management.details }} | [URL]({{ org.url }}) |
 {%-     endfor %}
-{%- elif "/networks" in api %}# Organization Networks
-| Name | Product Types | Enrollment String | ID | Is Bound To Config Template | Notes | Organization ID | Tags | Time Zone | URL |
-| ---- | ------------- | ----------------- | -- | --------------------------- | ----- | --------------- | ---- | --------- | --- |
-{%-     for network in data_to_template %}
-{%-         for product_type in network.productTypes %}
-| {{ network.name }} | {{ product_type }} | {{ network.enrollmentString }} | {{ network.id }} | {{ network.isBoundToConfigTemplate }} | {{ network.notes }} | {{ network.organizationId }} | {{ network.tags }} | {{ network.timeZone }} | [URL]({{ network.url }}) |
-{%-         endfor %}
-{%-     endfor %}
-{%- elif "/devices" in api %}# Organization Devices
-| Name | Address | Configuration Updated At | Firmware | LAN IP | Latitude | Longitude | MAC | Model | Network ID | Notes | Product Type | Serial | Tags | URL |
-| ---- | ------- | ------------------------ | -------- | ------ | -------- | --------- | --- | ----- | ---------- | ----- | ------------ | ------ | ---- | --- |
-{%-     for network in data_to_template %}
-| {{ network.name }} | {{ network.address }} | {{ network.configurationUpdatedAt }} | {{ network.firmware }} | {{ network.lanIp }} | {{ network.lat }} | {{ network.lng }} | {{ network.mac }} | {{ network.model }} | {{ network.networkId }} | {{ network.notes }} | {{ network.productType }} | {{ network.serial }} | {{ network.tags }} | [URL]({{ network.url }}) |
-{%-     endfor %}
+{%- elif api == "networks" %}# Organization Networks
+| Organization ID | Name | Product Types | Enrollment String | ID | Is Bound To Config Template | Notes | Tags | Time Zone | URL |
+| --------------- | ---- | ------------- | ----------------- | -- | --------------------------- | ----- | ---- | --------- | --- |
+{%-     for hit in data_to_template %}
+{%-         if hit %}
+{%-             for network in hit %}
+{%-                 for product_type in network.productTypes %}
+| {{ network.organizationId }} | {{ network.name }} | {{ product_type }} | {{ network.enrollmentString }} | {{ network.id }} | {{ network.isBoundToConfigTemplate }} | {{ network.notes }} | {{ network.tags }} | {{ network.timeZone }} | [URL]({{ network.url }}) |
+{%-                 endfor %}
+{%-             endfor %}
+{%-         endif %}
+{%-    endfor %}
+{%- elif "devices" in api %}# Organization Devices
+| Network ID | Name | Address | Configuration Updated At | Firmware | LAN IP | Latitude | Longitude | MAC | Model | Notes | Product Type | Serial | Tags | URL |
+| ---------- | ---- | ------- | ------------------------ | -------- | ------ | -------- | --------- | --- | ----- | ----- | ------------ | ------ | ---- | --- |
+{%-     for hit in data_to_template %}
+{%-         if hit %}
+{%-             for network in hit %}
+| {{ network.networkId }} | {{ network.name }} | {{ network.address }} | {{ network.configurationUpdatedAt }} | {{ network.firmware }} | {{ network.lanIp }} | {{ network.lat }} | {{ network.lng }} | {{ network.mac }} | {{ network.model }} | {{ network.notes }} | {{ network.productType }} | {{ network.serial }} | {{ network.tags }} | [URL]({{ network.url }}) |
+{%-             endfor %}
+{%-         endif %}
+{%-    endfor %}
+{%- elif api == "clients" %}# Clients
+| ID | Adaptive Policy Group | Description | Device Type Prediction | First Seen | Group Policy 802.1x | IPv4 | IPv6 | IPv6 Local | Last Seen | MAC | Manufacturer | Notes | OS | Recent Device Connection | Recent Device MAC | Recent Device Name | Recent Device Serial | SM Installed | SSID | Status | Switchport | Usage Received | Usage Sent | Usage Total | User | VLAN |
+| -- | --------------------- | ----------- | ---------------------- | ---------- | ------------------- | ---- | ---- | ---------- | --------- | --- | ------------ | ----- | -- | ------------------------ | ----------------- | ------------------ | -------------------- | ------------ | ---- | ------ | ---------- | -------------- | ---------- | ----------- | ---- | ---- |
+{%-     for hit in data_to_template %}
+{%-         if hit %}
+{%-             for client in hit %}
+| {{ client.id }} | {{ client.adaptivePolicyGroup }} | {{ client.description }} | {{ client.deviceTypePrediction }} | {{ client.firstSeen }} | {{ client.groupPolicy8021x }} | {{ client.ip }} | {{ client.ip6 }} | {{ client.ip6Local }} | {{ client.lastSeen }} | {{ client.mac }} | {{ client.manufacturer }} | {{ client.notes }} | {{ client.os }} | {{ client.recentDeviceConnection }} | {{ client.recentDeviceMac }} | {{ client.recentDeviceName }} | {{ client.recentDeviceSerial }} | {{ client.smInstalled }} | {{ client.ssid }} | {{ client.status }} | {{ client.switchport }} | {{ client.usage.recv }} | {{ client.usage.sent }} | {{ client.usage.total }} | {{ client.user }} | {{ client.vlan }} |
+{%-             endfor %}
+{%-         endif %}
+{%-    endfor %}
 {%- endif %}
