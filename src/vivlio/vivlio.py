@@ -23,7 +23,8 @@ class Vivlio():
         print(f"Vivlio has transformed { self.api_count } Meraki APIs into Business Ready Documents")
 
     def make_directories(self):
-        folder_list = ['Clients',
+        folder_list = ['CDP LLDP',
+                    'Clients',
                     'Devices',
                     'Management Interfaces',
                     'Networks',
@@ -59,10 +60,55 @@ class Vivlio():
 
     async def management_interfaces(self):
         api = "management_interfaces"
-        for hit in self.device_list:
-            if hit:
-                for device in hit:
-                    print(device['serial'])
+        results = await asyncio.gather(*(self.get_management_interfaces(device['serial'],device['name']) for hit in self.device_list if hit for device in hit))
+        async with aiofiles.open("Management Interfaces/JSON/Management Interfaces.json", mode="w") as f:
+            await f.write(json.dumps(results, indent=4, sort_keys=True))
+        clean_yaml = yaml.dump(results, default_flow_style=False)
+        async with aiofiles.open("Management Interfaces/YAML/Management Interfaces.yaml", mode='w' ) as f:
+            await f.write(clean_yaml)
+        template_dir = Path(__file__).resolve().parent
+        env = Environment(loader=FileSystemLoader(str(template_dir)), enable_async=True)
+        csv_template = env.get_template('vivlio_csv.j2')
+        csv_output = await csv_template.render_async(api = api,
+                                        data_to_template = results)
+        async with aiofiles.open("Management Interfaces/CSV/Management Interfaces.csv", mode='w' ) as f:
+            await f.write(csv_output)
+        template_dir = Path(__file__).resolve().parent
+        env = Environment(loader=FileSystemLoader(str(template_dir)), enable_async=True)
+        markdown_template = env.get_template('vivlio_markdown.j2')    
+        markdown_output = await markdown_template.render_async(api = api,
+                                    data_to_template = results)
+        async with aiofiles.open("Management Interfaces/Markdown/Management Interfaces.md", mode='w' ) as f:
+            await f.write(markdown_output)
+        template_dir = Path(__file__).resolve().parent
+        env = Environment(loader=FileSystemLoader(str(template_dir)), enable_async=True)
+        html_template = env.get_template('vivlio_html.j2')
+        html_output = await html_template.render_async(api = api,
+                                        data_to_template = results)
+        async with aiofiles.open("Management Interfaces/HTML/Management Interfaces.html", mode='w' ) as f:
+            await f.write(html_output)
+        template_dir = Path(__file__).resolve().parent
+        env = Environment(loader=FileSystemLoader(str(template_dir)), enable_async=True)
+        mindmap_template = env.get_template('vivlio_mindmap.j2')
+        mindmap_output = await mindmap_template.render_async(api = api,
+                                             data_to_template = results)
+        async with aiofiles.open("Management Interfaces/Mindmap/Management Interfaces.md", mode='w' ) as f:
+            await f.write(mindmap_output)
+
+    async def get_management_interfaces(self,device_serial,device_name):
+        async with meraki.aio.AsyncDashboardAPI() as aiomeraki:
+            try:
+                my_clients = await aiomeraki.devices.getDeviceManagementInterface(device_serial)
+                self.api_count += 1
+                my_clients['device_serial']=device_serial
+                my_clients['name']=device_name
+                print(my_clients)
+                return(my_clients)
+            except:
+                print("No Management Interface")
+
+    async def management_interfaces(self):
+        api = "management_interfaces"
         results = await asyncio.gather(*(self.get_management_interfaces(device['serial'],device['name']) for hit in self.device_list if hit for device in hit))
         async with aiofiles.open("Management Interfaces/JSON/Management Interfaces.json", mode="w") as f:
             await f.write(json.dumps(results, indent=4, sort_keys=True))
