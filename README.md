@@ -8,6 +8,8 @@ Organizations
 
 Organization Devices
 
+Organization Devices Management Interfaces
+
 Organization Networks
 
 Network Clients
