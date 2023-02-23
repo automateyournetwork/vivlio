@@ -187,5 +187,85 @@
 {%-    endfor %}
 </tbody>
 </table>
+{%- elif api == "management_interfaces" %}
+<h1>Management Interfaces</h1>
+<table id = "datatable">
+<thead>
+  <tr>
+    <th>Name</th>
+    <th>Device Serial</th>
+    <th>Active DDNS Hostname</th>
+    <th>DDNS Hostname WAN 1</th>
+    <th>DDNS Hostname WAN 2</th>
+    <th>WAN 1 Using Static IP</th>
+    <th>Static DNS</th>
+    <th>Static Gateway IP</th>
+    <th>Static IP</th>
+    <th>Static Subnet Mask</th>
+    <th>VLAN</th>
+    <th>WAN Enabled</th>
+    <th>WAN 2 Using Static IP</th>
+    <th>Static DNS</th>
+    <th>Static Gateway IP</th>
+    <th>Static IP</th>
+    <th>Static Subnet Mask</th>
+    <th>VLAN</th>
+    <th>WAN Enabled</th>
+  </tr>
+</thead>  
+<tbody>
+{%-     for interface in data_to_template %}
+{%-         if interface %}
+  <tr>
+    <td>{{ interface.name }}</td>
+    <td>{{ interface.device_serial }}</td>
+{%- if interface.ddnsHostnames %}
+    <td>{{ interface.ddnsHostnames.activeDdnsHostname }}</td>
+    <td>{{ interface.ddnsHostnames.ddnsHostnameWan1 }}</td>
+    <td>{{ interface.ddnsHostnames.ddnsHostnameWan2 }}</td>
+{%- else %}
+    <td>N/A</td>
+    <td>N/A</td>
+    <td>N/A</td>
+{%- endif %}
+{%- if interface.wlan1 %}
+    <td>{{ interface.wlan1.usingStaticIp }}</td>
+    <td>{{ interface.wan1.staticDns | default("N/A") }}</td>
+    <td>{{ interface.wan1.staticGatewayIp | default ("N/A") }}</td>
+    <td>{{ interface.wan1.staticIp | default ("N/A") }}</td>
+    <td>{{ interface.wan1.staticSubnetMask | default ("N/A") }}</td>
+    <td>{{ interface.wan1.vlan }}</td>
+    <td>{{ interface.wan1.wanEnabled }}</td>
+{%- else %}
+    <td>N/A</td>
+    <td>N/A</td>
+    <td>N/A</td>
+    <td>N/A</td>
+    <td>N/A</td>
+    <td>N/A</td>
+    <td>N/A</td>
+{%- endif %}
+{%- if interface.wlan2 %}
+    <td>{{ interface.wlan2.usingStaticIp | default("N/A") }}</td>
+    <td>{{ interface.wlan2.staticDns | default("N/A") }}</td>
+    <td>{{ interface.wlan2.staticGatewayIp | default("N/A") }}</td>
+    <td>{{ interface.wlan2.staticIp | default("N/A") }}</td>
+    <td>{{ interface.wlan2.staticSubnetMask | default("N/A") }}</td>
+    <td>{{ interface.wlan2.vlan }}</td>
+    <td>{{ interface.wlan2.wanEnabled }}</td>
+{%- else %}
+    <td>N/A</td>
+    <td>N/A</td>
+    <td>N/A</td>
+    <td>N/A</td>
+    <td>N/A</td>
+    <td>N/A</td>
+    <td>N/A</td>
+{%- endif %}
+  </tr>
+{%-         endif %}
+{%-    endfor %}
+</tbody>
+</table>
 {%- endif %}
 {%- include 'datatable_footer.j2' %}
