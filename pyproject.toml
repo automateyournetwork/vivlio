@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "vivlio"
-version = "1.0.1"
+version = "1.0.2"
 description = "Business ready documents from Meraki"
 authors = ["John Capobianco <ptcapo@gmail.com>"]
 packages = [{ include = "vivlio", from = "src"}]

@@ -18,12 +18,12 @@ class Vivlio():
         asyncio.run(self.organizations())
         asyncio.run(self.networks())
         asyncio.run(self.devices())
-        asyncio.run(self.clients())
-        asyncio.run(self.management_interfaces())
+        asyncio.run(self.sub_apis())
         print(f"Vivlio has transformed { self.api_count } Meraki APIs into Business Ready Documents")
 
     def make_directories(self):
-        folder_list = ['Clients',
+        folder_list = ['Alert Settings',
+                    'Clients',
                     'Devices',
                     'Management Interfaces',
                     'Networks',
@@ -44,6 +44,59 @@ class Vivlio():
             os.makedirs(final_directory, exist_ok=True)
             final_directory = os.path.join(current_directory, rf'{ folder }/Mindmap')
             os.makedirs(final_directory, exist_ok=True)
+
+    async def sub_apis(self):
+        await asyncio.gather(self.clients(),
+                            self.management_interfaces(),
+                            self.alert_settings()
+                        )
+
+    async def get_alert_settings(self,network_id):
+        async with meraki.aio.AsyncDashboardAPI() as aiomeraki:
+            try:
+                my_alert_settings = await aiomeraki.networks.getNetworkAlertsSettings(network_id)
+                self.api_count += 1
+                my_alert_settings['network_id']=network_id
+                return(my_alert_settings)
+            except:
+                print("No Alert Settings")
+
+    async def alert_settings(self):
+        api = "alert_settings"
+        results = await asyncio.gather(*(self.get_alert_settings(network['id']) for hit in self.network_list if hit for network in hit))
+        async with aiofiles.open("Alert Settings/JSON/Alert Settings.json", mode="w") as f:
+            await f.write(json.dumps(results, indent=4, sort_keys=True))
+        clean_yaml = yaml.dump(results, default_flow_style=False)
+        async with aiofiles.open("Alert Settings/YAML/Alert Settings.yaml", mode='w' ) as f:
+            await f.write(clean_yaml)
+        template_dir = Path(__file__).resolve().parent
+        env = Environment(loader=FileSystemLoader(str(template_dir)), enable_async=True)
+        csv_template = env.get_template('vivlio_csv.j2')
+        csv_output = await csv_template.render_async(api = api,
+                                        data_to_template = results)
+        async with aiofiles.open("Alert Settings/CSV/Alert Settings.csv", mode='w' ) as f:
+            await f.write(csv_output)
+        template_dir = Path(__file__).resolve().parent
+        env = Environment(loader=FileSystemLoader(str(template_dir)), enable_async=True)
+        markdown_template = env.get_template('vivlio_markdown.j2')    
+        markdown_output = await markdown_template.render_async(api = api,
+                                    data_to_template = results)
+        async with aiofiles.open("Alert Settings/Markdown/Alert Settings.md", mode='w' ) as f:
+            await f.write(markdown_output)
+        template_dir = Path(__file__).resolve().parent
+        env = Environment(loader=FileSystemLoader(str(template_dir)), enable_async=True)
+        html_template = env.get_template('vivlio_html.j2')
+        html_output = await html_template.render_async(api = api,
+                                        data_to_template = results)
+        async with aiofiles.open("Alert Settings/HTML/Alert Settings.html", mode='w' ) as f:
+            await f.write(html_output)
+        template_dir = Path(__file__).resolve().parent
+        env = Environment(loader=FileSystemLoader(str(template_dir)), enable_async=True)
+        mindmap_template = env.get_template('vivlio_mindmap.j2')
+        mindmap_output = await mindmap_template.render_async(api = api,
+                                             data_to_template = results)
+        async with aiofiles.open("Alert Settings/Mindmap/Alert Settings.md", mode='w' ) as f:
+            await f.write(mindmap_output)
 
     async def get_management_interfaces(self,device_serial,device_name):
         async with meraki.aio.AsyncDashboardAPI() as aiomeraki:
