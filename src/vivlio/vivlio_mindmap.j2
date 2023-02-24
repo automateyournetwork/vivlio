@@ -129,4 +129,32 @@
 {%- endif %}
 {%-         endif %}
 {%-    endfor %}
+{%- elif api == "alert_settings" %}
+# Alert Settings
+{%-     for alert_setting in data_to_template %}
+{%-         if alert_setting %}
+{%-             for alert in alert_setting['alerts'] %}
+## Network ID: {{ alert_setting.network_id }}
+### Enabled: {{ alert.enabled }}
+### Destinations
+#### Default
+##### All Admins: {{ alert_setting.defaultDestinations.allAdmins }}
+##### Email: {{ alert_setting.defaultDestinations.emails }}
+##### HTTP Server IDs: {{ alert_setting.defaultDestinations.httpServerIds }}
+##### SNMP: {{ alert_setting.defaultDestinations.snmp }}
+#### Alert
+##### All Admins: {{ alert.alertDestinations.allAdmins }}
+#### Emails: {{ alert.alertDestinations.emails }}
+#### HTTP Server IDs: {{ alert.alertDestinations.httpServerIds }}
+#### SNMP: {{ alert.alertDestinations.snmp }}
+### Filters
+#### Timeout: {{ alert.filters.timeout | default("N/A") }}
+#### Period: {{ alert.filters.period | default("N/A") }}
+#### Threshold: {{ alert.filters.threshold | default("N/A") }}
+#### Clients: {{ alert.filters.clients | default("N/A") }}
+#### Selector: {{ alert.filters.selector | default("N/A") }}
+### Type: {{ alert.type }}
+{%-             endfor %}    
+{%-         endif %}
+{%-    endfor %}
 {%- endif %}

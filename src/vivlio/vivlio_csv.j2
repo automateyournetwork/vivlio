@@ -34,4 +34,12 @@
 {{ interface.name }},{{ interface.device_serial }},{%- if interface.ddnsHostnames %}{{ interface.ddnsHostnames.activeDdnsHostname }},{{ interface.ddnsHostnames.ddnsHostnameWan1 }},{{ interface.ddnsHostnames.ddnsHostnameWan2 }},{%- else %}N/A,N/A,N/A,{%- endif %}{%- if interface.wlan1 %}{{ interface.wlan1.usingStaticIp }},{{ interface.wan1.staticDns | replace(","," ") | default("N/A") }},{{ interface.wan1.staticGatewayIp | default ("N/A") }},{{ interface.wan1.staticIp | default ("N/A") }},{{ interface.wan1.staticSubnetMask | default ("N/A") }},{{ interface.wan1.vlan }},{{ interface.wan1.wanEnabled }},{%- else %}N/A,N/A,N/A,N/A,N/A,N/A,N/A,{%- endif %}{%- if interface.wlan2 %}{{ interface.wlan2.usingStaticIp | default("N/A") }},{{ interface.wlan2.staticDns | replace(","," ") | default("N/A") }},{{ interface.wlan2.staticGatewayIp | default("N/A") }},{{ interface.wlan2.staticIp | default("N/A") }},{{ interface.wlan2.staticSubnetMask | default("N/A") }},{{ interface.wlan2.vlan }},{{ interface.wlan2.wanEnabled }}{%- else %}N/A,N/A,N/A,N/A,N/A,N/A,N/A{%- endif %}
 {%-         endif %}
 {%-    endfor %}
+{%- elif api == "alert_settings" %}Network ID,Default Destinations All Admins,Default Destinations Emails,Default Destinations HTTP Server IDs,Default Destinations SNMP,Enabled,Filters Timeout,Filters Period,Filters Threshold,Filters Clients,Filters Selector,Type,Alert Destinations All Admins,Alert Destinations Emails,Alert Destinations HTTP Server IDs,Alert Destinations SNMP
+{%-     for alert_setting in data_to_template %}
+{%-         if alert_setting %}
+{%-             for alert in alert_setting['alerts'] %}
+{{ alert_setting.network_id }},{{ alert_setting.defaultDestinations.allAdmins }},{{ alert_setting.defaultDestinations.emails | replace(","," ") }},{{ alert_setting.defaultDestinations.httpServerIds | replace(","," ") }},{{ alert_setting.defaultDestinations.snmp }},{{ alert.enabled }},{{ alert.filters.timeout | default("N/A") }},{{ alert.filters.period | default("N/A") }},{{ alert.filters.threshold | default("N/A") }},{{ alert.filters.clients | default("N/A") }},{{ alert.filters.selector | default("N/A") | replace(","," ") }},{{ alert.type }},{{ alert.alertDestinations.allAdmins }},{{ alert.alertDestinations.emails | replace(","," ") }},{{ alert.alertDestinations.httpServerIds | replace(","," ") }},{{ alert.alertDestinations.snmp }}
+{%-             endfor %}    
+{%-         endif %}
+{%-    endfor %}
 {%- endif %}

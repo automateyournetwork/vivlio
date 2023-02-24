@@ -4,6 +4,8 @@ Business Ready Documents for Meraki
 
 ## Current API Coverage
 
+Alert Settings
+
 Organizations
 
 Organization Devices

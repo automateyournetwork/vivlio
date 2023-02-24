@@ -267,5 +267,55 @@
 {%-    endfor %}
 </tbody>
 </table>
+{%- elif api == "alert_settings" %}
+<h1>Alert Settings</h1>
+<table id = "datatable">
+<thead>
+  <tr>
+    <th>Network ID</th>
+    <th>Default Destinations All Admins</th>
+    <th>Default Destinations Emails</th>
+    <th>Default Destinations HTTP Server IDs</th>
+    <th>Default Destinations SNMP</th>
+    <th>Enabled</th>
+    <th>Filters Timeout</th>
+    <th>Filters Period</th>
+    <th>Filters Threshold</th>
+    <th>Filters Clients</th>
+    <th>Filters Selector</th>
+    <th>Type</th>
+    <th>Alert Destinations All Admins</th>
+    <th>Alert Destinations Emails</th>
+    <th>Alert Destinations HTTP Server IDs</th>
+    <th>Alert Destinations SNMP</th>
+  </tr>
+</thead>  
+<tbody>
+{%-     for alert_setting in data_to_template %}
+{%-         if alert_setting %}
+{%-             for alert in alert_setting['alerts'] %}
+  <tr>
+    <td>{{ alert_setting.network_id }}</td>
+    <td>{{ alert_setting.defaultDestinations.allAdmins }}</td>
+    <td>{{ alert_setting.defaultDestinations.emails }}</td>
+    <td>{{ alert_setting.defaultDestinations.httpServerIds }}</td>
+    <td>{{ alert_setting.defaultDestinations.snmp }}</td>
+    <td>{{ alert.enabled }}</td>
+    <td>{{ alert.filters.timeout | default("N/A") }}</td>
+    <td>{{ alert.filters.period | default("N/A") }}</td>
+    <td>{{ alert.filters.threshold | default("N/A") }}</td>
+    <td>{{ alert.filters.clients | default("N/A") }}</td>
+    <td>{{ alert.filters.selector | default("N/A") }}</td>
+    <td>{{ alert.type }}</td>
+    <td>{{ alert.alertDestinations.allAdmins }}</td>
+    <td>{{ alert.alertDestinations.emails }}</td>
+    <td>{{ alert.alertDestinations.httpServerIds }}</td>
+    <td>{{ alert.alertDestinations.snmp }}</td>
+  </tr>
+{%-             endfor %}    
+{%-         endif %}
+{%-    endfor %}
+</tbody>
+</table>
 {%- endif %}
 {%- include 'datatable_footer.j2' %}
