@@ -26,7 +26,7 @@
 {%-             endfor %}
 {%-         endif %}
 {%-    endfor %}
-{%- elif api == "clients" %}# Clients
+{%- elif api == "network clients" %}# Network Clients
 | ID | Adaptive Policy Group | Description | Device Type Prediction | First Seen | Group Policy 802.1x | IPv4 | IPv6 | IPv6 Local | Last Seen | MAC | Manufacturer | Notes | OS | Recent Device Connection | Recent Device MAC | Recent Device Name | Recent Device Serial | SM Installed | SSID | Status | Switchport | Usage Received | Usage Sent | Usage Total | User | VLAN |
 | -- | --------------------- | ----------- | ---------------------- | ---------- | ------------------- | ---- | ---- | ---------- | --------- | --- | ------------ | ----- | -- | ------------------------ | ----------------- | ------------------ | -------------------- | ------------ | ---- | ------ | ---------- | -------------- | ---------- | ----------- | ---- | ---- |
 {%-     for hit in data_to_template %}

@@ -4,17 +4,25 @@ Business Ready Documents for Meraki
 
 ## Current API Coverage
 
-Alert Settings
+Devices
 
-Organizations
+* Devices Cellular Sims
 
-Organization Devices
+* Device Clients
 
-Organization Devices Management Interfaces
+* Devices LLDP CDP
 
-Organization Networks
+Devices Management Interfaces
 
-Network Clients
+Networks
+
+Networks Alert Settings
+
+Networks Alert History
+
+Networks Clients
+
+* Missing data to template - in progress
 
 ## Installation
 

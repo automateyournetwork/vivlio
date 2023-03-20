@@ -20,7 +20,7 @@
 {%-             endfor %}
 {%-         endif %}
 {%-    endfor %}
-{%- elif api == "clients" %}ID,Adaptive Policy Group,Description,Device Type Prediction,First Seen,Group Policy 802.1x,IPv4,IPv6,IPv6 Local,Last Seen,MAC,Manufacturer,Notes,OS,Recent Device Connection,Recent Device MAC,Recent Device Name,Recent Device Serial,SM Installed,SSID,Status,Switchport,Usage Received,Usage Sent,Usage Total,User,VLAN
+{%- elif api == "network clients" %}ID,Adaptive Policy Group,Description,Device Type Prediction,First Seen,Group Policy 802.1x,IPv4,IPv6,IPv6 Local,Last Seen,MAC,Manufacturer,Notes,OS,Recent Device Connection,Recent Device MAC,Recent Device Name,Recent Device Serial,SM Installed,SSID,Status,Switchport,Usage Received,Usage Sent,Usage Total,User,VLAN
 {%-     for hit in data_to_template %}
 {%-         if hit %}
 {%-             for client in hit %}
@@ -40,6 +40,15 @@
 {%-             for alert in alert_setting['alerts'] %}
 {{ alert_setting.network_id }},{{ alert_setting.defaultDestinations.allAdmins }},{{ alert_setting.defaultDestinations.emails | replace(","," ") }},{{ alert_setting.defaultDestinations.httpServerIds | replace(","," ") }},{{ alert_setting.defaultDestinations.snmp }},{{ alert.enabled }},{{ alert.filters.timeout | default("N/A") }},{{ alert.filters.period | default("N/A") }},{{ alert.filters.threshold | default("N/A") }},{{ alert.filters.clients | default("N/A") }},{{ alert.filters.selector | default("N/A") | replace(","," ") }},{{ alert.type }},{{ alert.alertDestinations.allAdmins }},{{ alert.alertDestinations.emails | replace(","," ") }},{{ alert.alertDestinations.httpServerIds | replace(","," ") }},{{ alert.alertDestinations.snmp }}
 {%-             endfor %}    
+{%-         endif %}
+{%-    endfor %}
+{%- elif api == "lldp_cdp" %}
+Device Name,Device Serial,Source MAC,Port,CDP Address,CDP Device ID,CDP Port ID,CDP Source Port,LLDP Management Address,LLDP Port ID,LLDP Source Port,LLDP System Name
+{%-     for interface in data_to_template %}
+{%-         if interface %}
+{%-             for port in interface.ports %}
+{{ interface.name }},{{ interface.device_serial }},{{ interface.sourceMac }},{{ port }}
+{%-             endfor %}
 {%-         endif %}
 {%-    endfor %}
 {%- endif %}
